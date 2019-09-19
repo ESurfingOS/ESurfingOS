@@ -1,0 +1,203 @@
+#include "ctiot_mqtt_client.h"
+#include "MQTTClient.h"
+
+#include "atiny_mqtt/mqtt_client.h"
+#include "los_base.h"
+#include "los_task.ph"
+#include "los_typedef.h"
+#include "los_sys.h"
+#include "log/atiny_log.h"
+#include "MQTTClient.h"
+
+#include "cJSON.h"
+
+
+
+typedef enum
+{
+    MQTT_CONNECT_WITH_PRODUCT_ID,
+    MQTT_CONNECT_WITH_DEVICE_ID
+}mqtt_dynamic_connect_state_e;
+
+typedef struct
+{
+    mqtt_static_connection_info_s save_info;
+    char *  got_password;
+    mqtt_dynamic_connect_state_e state;
+    uint8_t connection_update_flag;
+    uint8_t has_device_id; 
+    uint8_t reserve[2];
+}mqtt_dynamic_info_s;
+
+struct ctiot_mqtt_client_tag_s
+{
+    mqtt_device_info_s device_info;
+    MQTTClient client;
+    mqtt_param_s params;
+	CTIOT_CB_FUNC *ctiotCbFunc;
+    mqtt_dynamic_info_s dynamic_info;
+    char *sub_topic;
+    uint8_t init_flag;
+    uint8_t reserve[3];
+};
+
+struct ctiot_mqtt_client_tag_s *m_mqtt_client;
+
+void ctiot_mqtt_client_init(void)
+{
+	m_mqtt_client = mqtt_get_client();
+}
+
+CTIOT_MSG_STATUS ctiot_tlink_date_report(TLINK_DATA_REPORT *para)
+{
+    CTIOT_MSG_STATUS ret = CTIOT_SUCCESS;
+
+    CTIOT_MQTT_PARA mqttPara = {0};
+    mqttPara.count = 2;
+    mqttPara.paraList[0].ctiotParaType = CTIOT_STR;
+    mqttPara.paraList[0].paraName = "testStr";
+    mqttPara.paraList[0].u.ctiotStr.maxLen = 5;
+    mqttPara.paraList[0].u.ctiotStr.minLen = 3;
+    mqttPara.paraList[0].u.ctiotStr.val = "aaa";
+
+    mqttPara.paraList[1].ctiotParaType = CTIOT_INT;
+    mqttPara.paraList[1].paraName = "testData";
+    mqttPara.paraList[1].u.ctiotInt.max = 5;
+    mqttPara.paraList[1].u.ctiotInt.min = 3;
+    mqttPara.paraList[1].u.ctiotInt.val = 4;
+
+    ret = ctiot_mqtt_validate(mqttPara);
+
+    if(ret != CTIOT_SUCCESS){
+        return ret;
+    }
+
+    ret = ctiot_msg_pub("data_report",para->qos,mqttPara);
+
+    return ret;
+}
+
+CTIOT_MSG_STATUS ctiot_tlink_event_report(TLINK_EVENT_REPORT *para)
+{
+    CTIOT_MSG_STATUS ret = CTIOT_SUCCESS;
+		
+    CTIOT_MQTT_PARA mqttPara = {0};
+    mqttPara.count = 2;
+    mqttPara.paraList[0].ctiotParaType = CTIOT_STR;
+    mqttPara.paraList[0].paraName = "testStr";
+    mqttPara.paraList[0].u.ctiotStr.maxLen = 5;
+    mqttPara.paraList[0].u.ctiotStr.minLen = 3;
+    mqttPara.paraList[0].u.ctiotStr.val = "aaa";
+
+    mqttPara.paraList[1].ctiotParaType = CTIOT_INT;
+    mqttPara.paraList[1].paraName = "testData";
+    mqttPara.paraList[1].u.ctiotInt.max = 5;
+    mqttPara.paraList[1].u.ctiotInt.min = 3;
+    mqttPara.paraList[1].u.ctiotInt.val = 4;
+
+    ret = ctiot_mqtt_validate(mqttPara);
+
+    if(ret != CTIOT_SUCCESS){
+        return ret;
+    }
+
+    ret = ctiot_msg_pub("event_report",para->qos,mqttPara);
+    return ret;
+}
+
+CTIOT_MSG_STATUS ctiot_tlink_cmd_response(TLINK_CMD_RESPONSE *para)
+{
+    CTIOT_MSG_STATUS ret = CTIOT_SUCCESS;
+
+    CTIOT_MQTT_PARA mqttPara = {0};
+    mqttPara.count = 2;
+    mqttPara.paraList[0].ctiotParaType = CTIOT_STR;
+    mqttPara.paraList[0].paraName = "testStr";
+    mqttPara.paraList[0].u.ctiotStr.maxLen = 5;
+    mqttPara.paraList[0].u.ctiotStr.minLen = 3;
+    mqttPara.paraList[0].u.ctiotStr.val = para->testStr;
+
+    mqttPara.paraList[1].ctiotParaType = CTIOT_INT;
+    mqttPara.paraList[1].paraName = "testData";
+    mqttPara.paraList[1].u.ctiotInt.max = 5;
+    mqttPara.paraList[1].u.ctiotInt.min = 3;
+    mqttPara.paraList[1].u.ctiotInt.val = para->testData;
+
+    ret = ctiot_mqtt_validate(mqttPara);
+
+    if(ret != CTIOT_SUCCESS){
+        return ret;
+    }
+
+    ret = ctiot_msg_response("cmd_response",para->qos,para->taskId,mqttPara); 
+
+    return ret;
+}
+
+static void ctiot_cmd_dn_entry(MessageData *md)
+{
+    if ((md == NULL) || (md->message == NULL)|| (mqtt_modify_payload(md) != ATINY_OK))
+    {
+        ATINY_LOG(LOG_FATAL, "null point");
+        return;
+    }
+
+    char *payload = md->message->payload;
+
+    TLINK_CMD_DN para = {0};
+			
+    if(m_mqtt_client->ctiotCbFunc != NULL && m_mqtt_client->ctiotCbFunc->ctiot_cmd_dn != NULL)
+    {
+        CTIOT_MQTT_PARA paraHead = ctiot_json_parsing(payload);
+        int i = 0;
+        while(i < paraHead.count){
+            if(strcmp(paraHead.paraList[i].paraName,"taskId") == 0){
+                para.taskId = (int)paraHead.paraList[i].u.ctiotInt.val;
+            }
+            if(strcmp(paraHead.paraList[i].paraName,"testStr") == 0){
+                para.testStr = (char *)atiny_malloc(strlen(paraHead.paraList[i].u.ctiotStr.val)+1);
+                if(para.testStr == NULL)
+                {
+                    return;
+                }
+                memset(para.testStr,0,strlen(paraHead.paraList[i].u.ctiotStr.val)+1);
+                memcpy(para.testStr,paraHead.paraList[i].u.ctiotStr.val,strlen(paraHead.paraList[i].u.ctiotStr.val));   
+            }
+            if(strcmp(paraHead.paraList[i].paraName,"testData") == 0){
+                para.testData = (int)paraHead.paraList[i].u.ctiotDouble.val;
+            }
+            i++;
+        }
+
+        m_mqtt_client->ctiotCbFunc->ctiot_cmd_dn(&para);
+
+        atiny_free(para.testStr);
+    }
+}
+
+typedef void (* CTIOT_CB)(MessageData *md);
+
+int ctiot_mqtt_subscribe(void* mhandle)
+{
+	struct ctiot_mqtt_client_tag_s *handle = mhandle;
+	CTIOT_CB topic_callback = NULL;
+    char *topic;
+    int rc;
+
+    if (handle->sub_topic)
+    {
+        (void)MQTTSetMessageHandler(&handle->client, handle->sub_topic, NULL);
+        atiny_free(handle->sub_topic);
+        handle->sub_topic = NULL;
+    }
+
+    topic = "cmd_dn";
+    topic_callback = ctiot_cmd_dn_entry;
+    (void)MQTTSetMessageHandler(&handle->client, topic, topic_callback);
+    ATINY_LOG(LOG_INFO, "subcribe static topic: %s", topic);
+
+    rc = MQTT_SUCCESS;
+
+    return rc;
+}
+

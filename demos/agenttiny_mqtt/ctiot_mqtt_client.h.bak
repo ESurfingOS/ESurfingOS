@@ -1,0 +1,139 @@
+#ifndef __CTIOT_MQTT_CLIENT_H__
+#define __CTIOT_MQTT_CLIENT_H__
+
+#include "atiny_mqtt/mqtt_client.h"
+
+//*************************************************
+//
+//! @addtogroup service为cmd_dn的数据结构体
+//! @
+//
+//*************************************************
+typedef struct tlink_cmd_dn
+{
+    int taskId;
+    int testData;
+    char* testStr;
+}TLINK_CMD_DN;
+
+//*************************************************
+//
+//! @addtogroup 注册callbackfunction结构体
+//! @{
+//
+//*************************************************
+typedef struct
+{
+    void (*ctiot_cmd_dn)(void *);//!< service为cmd_dn的回调函数
+}CTIOT_CB_FUNC;
+//*************************************************
+//
+//! @}
+//
+//************************************************* 
+
+
+//*************************************************
+//
+//! @addtogroup service为data_report的数据结构体
+//! @{
+//
+//*************************************************
+typedef struct tlink_data_report{
+    int testData;//!< 属性说明
+    char* testStr;//!< 属性说明
+    mqtt_qos_e qos;//!< QOS等级
+}TLINK_DATA_REPORT;
+//*************************************************
+//
+//! @}
+//
+//************************************************* 
+
+
+//*************************************************
+//
+//! @addtogroup service为tlink_event_report的数据结构体
+//! @{
+//
+//*************************************************
+typedef struct tlink_event_report{
+    int testData;//!< 属性说明
+    char* testStr;//!< 属性说明
+    mqtt_qos_e qos;//!< QOS等级
+}TLINK_EVENT_REPORT;
+//*************************************************
+//
+//! @}
+//
+//************************************************* 
+
+
+//*************************************************
+//
+//! @addtogroup service为cmd_response的数据结构体
+//! @{
+//
+//*************************************************
+typedef struct tlink_cmd_response
+{
+    int taskId;//!< 下行返回数据，需要携带下行报文携带的taskId
+    int testData;//!< 属性说明
+    char* testStr;//!< 属性说明
+    mqtt_qos_e qos;//!< QOS等级
+}TLINK_CMD_RESPONSE;
+//*************************************************
+//
+//! @}
+//
+//*************************************************
+
+//*************************************************
+//
+//! @addtogroup API接口
+//! @{
+//
+//*************************************************
+//**************************************************
+//
+//! @brief service为date_report
+//!
+//! @param TLINK_DATA_REPORT 参见@ref TLINK_DATA_REPORT
+//!
+//! @retval  CTIOT_MSG_STATUS 返回结果码
+//
+//**************************************************
+CTIOT_MSG_STATUS ctiot_tlink_date_report(TLINK_DATA_REPORT *para);
+
+//**************************************************
+//
+//! @brief service为date_report
+//!
+//! @param TLINK_EVENT_REPORT 参见@ref TLINK_EVENT_REPORT
+//!
+//! @retval  CTIOT_MSG_STATUS 返回结果码
+//
+//**************************************************
+CTIOT_MSG_STATUS ctiot_tlink_event_report(TLINK_EVENT_REPORT *para);
+
+//**************************************************
+//
+//! @brief service为date_report
+//!
+//! @param TLINK_CMD_RESPONSE 参见@ref TLINK_CMD_RESPONSE
+//!
+//! @retval  CTIOT_MSG_STATUS 返回结果码
+//
+//**************************************************
+CTIOT_MSG_STATUS ctiot_tlink_cmd_response(TLINK_CMD_RESPONSE *para);
+//*************************************************
+//
+//! @}
+//
+//*************************************************
+
+int ctiot_mqtt_subscribe(void* mhandle);
+
+void ctiot_mqtt_client_init(void);
+	
+#endif

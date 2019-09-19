@@ -1,0 +1,14 @@
+[AutoCodeTool]使用参数说明
+AutoCodeTool -p service_info.json -s device_info.json -d ../ -c
+-p/P service json文件
+-s/S 是否透传json文件
+-d/D 项目的根目录
+-c 生成demo 源文件，默认不生成
+
+
+[AutoCodeTool]工具使用说明
+1)下载[AutoCodeTool]
+2)在ctwing平台上配置相关设备参数，下载对应的json文件
+3)根据[AutoCodeTool]使用参数说明，自动生成相关sdk代码及demo代码
+4)把生成的sdk代码文件及demo代码文件放到工程对应的ctiot sdk及ctiot mqtt demo目录
+5)编译，加载到开发板运行

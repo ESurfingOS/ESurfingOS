@@ -1,0 +1,106 @@
+﻿{
+  "properties": [
+    {
+      "propertyId": 10458,
+      "identifier": "property_motordata",
+      "propertyName": "电机状态",
+      "description": "电机状态属性",
+      "dataType": "bool",
+      "dataSchema": "\"len\":1,\"boolDetail\":{\"false\":\"0\",\"true\":\"1\"}"
+    },
+    {
+      "propertyId": 10459,
+      "identifier": "property_humiditydata",
+      "propertyName": "湿度数据",
+      "description": "湿度数据属性",
+      "dataType": "float",
+      "dataSchema": "\"len\":4,\"unit\":\"null\",\"min\":\"0\",\"max\":\"100\",\"step\":\"1\",\"unitName\":\"\""
+    },
+    {
+      "propertyId": 10460,
+      "identifier": "property_temperaturedata",
+      "propertyName": "温度数据",
+      "description": "温度数据属性",
+      "dataType": "float",
+      "dataSchema": "\"len\":4,\"unit\":\"°C\",\"min\":\"0\",\"max\":\"100\",\"step\":\"1\",\"unitName\":\"摄氏度\""
+    }
+  ],
+  "services": [
+    {
+      "serviceId": 10477,
+      "identifier": "service_datareport",
+      "serviceName": "服务名称_数据上报",
+      "serviceType": "DataReport",
+      "description": "数据上报服务",
+      "properties": [
+        {
+          "propertyId": 10460
+        },
+        {
+          "propertyId": 10459
+        },
+        {
+          "propertyId": 10458
+        }
+      ],
+      "parameters": []
+    },
+    {
+      "serviceId": 10478,
+      "identifier": "service_eventreport",
+      "serviceName": "服务名称_事件上报",
+      "serviceType": "EventReport",
+      "description": "事件上报服务",
+      "properties": [
+        {
+          "propertyId": 10460
+        },
+        {
+          "propertyId": 10459
+        },
+        {
+          "propertyId": 10458
+        }
+      ],
+      "parameters": []
+    },
+    {
+      "serviceId": 10479,
+      "identifier": "service_cmddn",
+      "serviceName": "服务名称_指令下发",
+      "serviceType": "Command",
+      "description": "指令下发服务",
+      "properties": [
+        {
+          "propertyId": 10460
+        },
+        {
+          "propertyId": 10459
+        },
+        {
+          "propertyId": 10458
+        }
+      ],
+      "parameters": []
+    },
+    {
+      "serviceId": 10480,
+      "identifier": "service_cmddnresponse",
+      "serviceName": "服务名称_指令下发响应",
+      "serviceType": "CommandResponse",
+      "description": "指令下发响应服务",
+      "properties": [
+        {
+          "propertyId": 10460
+        },
+        {
+          "propertyId": 10459
+        },
+        {
+          "propertyId": 10458
+        }
+      ],
+      "parameters": []
+    }
+  ]
+}
