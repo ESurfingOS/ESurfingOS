@@ -12,5 +12,5 @@
   
 3)使用说明
 
-  用户使用天翼OS-MQTT版本请参考文档《中国电信天翼OS软件开发指南_MQTT.pdf》
-  用户关于如有华为LiteOS问题请参考链接 LiteOS
+  关于天翼OS相关问题请参考文档：[《中国电信天翼OS软件开发指南_MQTT.pdf》](https://github.com/ESurfingOS/ESurfingOS/blob/master/doc/%E4%B8%AD%E5%9B%BD%E7%94%B5%E4%BF%A1%E5%A4%A9%E7%BF%BCOS%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97_MQTT.pdf)<br/>
+  关于华为LiteOS问题请参考链接： [LiteOS](https://github.com/liteos/liteos)<br/>
