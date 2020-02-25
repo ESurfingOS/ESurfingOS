@@ -6,6 +6,7 @@
 
 2)天翼OS功能
 
+  天翼OS提供基于LiteOS的MQTT协议SDK和样例程序，主要功能如下：
   动态JSON物模型API自动生成模块：支持用户定义属性服务自动生成动态API；<br/>
   透传设备API基础模块：初始化，登录，数据上报,指令下发,样例使用程序Demo；<br/>
   非透传设备API基础模块：初始化，登录，数据上报,事件上报,指令下发,指令下发应答，样例使用程序Demo。<br/>
@@ -14,3 +15,6 @@
 
   关于天翼OS相关问题请参考文档：[《中国电信天翼OS软件开发指南_MQTT.pdf》](https://github.com/ESurfingOS/ESurfingOS/blob/master/doc/%E4%B8%AD%E5%9B%BD%E7%94%B5%E4%BF%A1%E5%A4%A9%E7%BF%BCOS%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97_MQTT.pdf)<br/>
   关于华为LiteOS问题请参考链接： [LiteOS](https://github.com/liteos/liteos)<br/>
+  
+4)技术支持
+  关于天翼OS技术支持请发送邮件： esos@chinatelecom.cn
