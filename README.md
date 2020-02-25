@@ -17,5 +17,5 @@
   关于华为LiteOS问题请参考链接： [LiteOS](https://github.com/liteos/liteos)<br/>
   
 4)技术支持
-<br/>
+<br/><br/>
   关于天翼OS技术支持请发送邮件： esos@chinatelecom.cn
